@@ -1,0 +1,153 @@
+{% autoescape true %}
+<html>
+<head>
+<style>
+body
+{
+	background-color:#303030;
+	color:white;
+}
+
+h1
+{
+	color:white;
+	text-align:center;
+}
+
+table
+{
+	display:inline-block;
+}
+
+ul
+{
+	list-style-type: none;
+}
+
+li
+{
+	display:inline;
+}
+
+img
+{
+    border:0;
+    vertical-align:bottom;
+}
+.Image
+{
+    position:relative;
+    display:inline-block;
+}
+.Image a.Reddit
+{
+    position:absolute;
+    bottom:15px;
+    width:16px;
+    height:16px;
+    text-align:center;
+    z-index:2;
+    text-decoration:none;
+    display:block;
+    left:15px;
+}
+.Image img.Reddit
+{
+    width:24px;
+    height:24px;
+}
+.Image input.Favorite
+{
+    position:absolute;
+    bottom:10px;
+    width:16px;
+    height:16px;
+    text-align:center;
+    z-index:2;
+    text-decoration:none;
+    display:block;
+    right:10px;
+}​
+</style>
+<script>
+function favorite(button)
+{
+	var request = '/favorite?wall_id=' + button.value;
+
+	if(button.getAttribute("favorite") == 'False')
+	{
+		request += '&action=add';
+	}
+	else
+	{
+		request += '&action=remove';
+	}
+
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	{// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			result = xmlhttp.responseText.split(' ');
+			var button_element = document.getElementById(result[1] + '_button');
+
+			if(result[0] == 'add')
+			{
+				button_element.setAttribute("favorite","True");
+				button_element.setAttribute("src","/images/heart.gif");
+			}
+			else
+			{
+				button_element.setAttribute("favorite","False");
+				button_element.setAttribute("src","/images/empty_heart.gif");
+			}
+			
+		}
+	}
+
+	xmlhttp.open("GET",request,true);
+	xmlhttp.send();
+}
+</script>
+</head>
+<body>
+
+<header>
+<h1>Reddit Wallpaper!</h1>
+<center>
+<table>
+<tr>
+	<td>
+		{% if logout_url is defined %}
+			Hi, {{ username }}.<br />
+			<a href='{{ logout_url }}'><button type='button'>Logout</button></a>
+			<a href='/'><button type='button'>Main Page</button></a>
+		{% else %}
+			<a href='{{ login_url }}'><button type='button'>Login</button></a>
+		{% endif %}
+	</td>
+</tr>
+</table>
+</center>
+</header>
+
+<center>
+<div>
+{% for wall in wallpapers %}
+<li>
+<div class="Image">
+<a href='http://www.reddit.com{{ wall.reddit_link }}' target="_blank" class='Reddit'><img class='Reddit' src='/images/reddit_button.gif' width="12" height="12"/></a>
+<input class='Favorite' favorite="True" type='image' id='{{ wall.name }}_button' value='{{wall.name}}' onClick='favorite(this);' src='/images/heart.gif' width="12" height="12"/>
+<a href='{{ wall.image_link }}' target="_blank"><img id='{{ wall.name }}' src={{ thumbnails[wall.name] }}/></a>
+</div>	
+</li>
+{% endfor %}
+</div>
+</center>
+</body>
+{% endautoescape %}

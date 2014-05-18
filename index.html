@@ -1,0 +1,296 @@
+{% autoescape true %}
+<html>
+<head>
+<style>
+body
+{
+	background-color:#303030;
+	color:white;
+}
+
+h1
+{
+	color:white;
+	text-align:center;
+}
+
+table
+{
+	display:inline-block;
+}
+
+ul
+{
+	list-style-type: none;
+}
+
+li
+{
+	display:inline;
+}
+
+img
+{
+    border:0;
+    vertical-align:bottom;
+}
+.Image
+{
+    position:relative;
+    display:inline-block;
+}
+.Image a.Reddit
+{
+    position:absolute;
+    bottom:15px;
+    width:16px;
+    height:16px;
+    text-align:center;
+    z-index:2;
+    text-decoration:none;
+    display:block;
+    left:15px;
+}
+.Image img.Reddit
+{
+    width:24px;
+    height:24px;
+}
+.Image input.Favorite
+{
+    position:absolute;
+    bottom:10px;
+    width:16px;
+    height:16px;
+    text-align:center;
+    z-index:2;
+    text-decoration:none;
+    display:block;
+    right:10px;
+}​
+</style>
+<script>
+
+var lastRequst = "";
+
+function init()
+{
+	sortChange();
+	refresh();
+}
+
+function buildRequest()
+{
+	var request = "results?"
+
+	subs = document.getElementsByName("subreddits");
+	
+	for(var i = 0; i < subs.length; i++)
+	{
+		if(subs[i].checked)
+		{
+			request += "sub=" + subs[i].value + "&";
+		}
+	}
+
+	var sortElement = document.getElementById('sort')
+	var sortType = sortElement.options[sortElement.selectedIndex].value;
+	request += "sort=" + sortType + "&";
+
+	if(sortType == "top")
+	{
+		var timeElement = document.getElementById('time')
+		request += "time=" + timeElement.options[timeElement.selectedIndex].value;
+	}
+
+	if(request.slice(-1) == '&')
+	{
+		request = request.substring(0, request.length - 1)
+	}
+
+	return request;	
+}
+
+function refresh()
+{
+	lastRequest = buildRequest();
+	performRequest(lastRequest, true);
+}
+
+function loadMore()
+{
+	var last_id = '';
+	var images = document.getElementsByTagName("img");
+
+	if(images.length > 0)
+	{
+		var lastChild = images[images.length - 1];
+		last_id = lastChild.getAttribute('id');
+	}
+
+	request = lastRequest + "&after="+last_id;
+	performRequest(request, false);
+}
+
+function performRequest(request, clear)
+{
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	{// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			if(clear)
+			{
+				document.getElementById("main_div").innerHTML = ""
+			}
+
+			document.getElementById("main_div").innerHTML+=xmlhttp.responseText;
+		}
+	}
+
+	xmlhttp.open("GET",request,true);
+	xmlhttp.send();
+}
+
+function sortChange()
+{
+	var sortComboBox =  document.getElementById('sort');
+	var val = sortComboBox.options[sortComboBox.selectedIndex].value;
+
+	if(val != 'top')
+	{
+		document.getElementById('time').disabled = true;
+	}
+	else
+	{
+		document.getElementById('time').disabled = false;
+	}
+}
+
+function favorite(button)
+{
+	var request = '/favorite?wall_id=' + button.value;
+
+	if(button.getAttribute("favorite") == 'False')
+	{
+		request += '&action=add';
+	}
+	else
+	{
+		request += '&action=remove';
+	}
+
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	{// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			result = xmlhttp.responseText.split(' ');
+			var button_element = document.getElementById(result[1] + '_button');
+
+			if(result[0] == 'add')
+			{
+				button_element.setAttribute("favorite","True");
+				button_element.setAttribute("src","/images/heart.gif");
+			}
+			else
+			{
+				button_element.setAttribute("favorite","False");
+				button_element.setAttribute("src","/images/empty_heart.gif");
+			}
+			
+		}
+	}
+
+	xmlhttp.open("GET",request,true);
+	xmlhttp.send();
+}
+</script>
+</head>
+<body onload='init()'>
+
+<header>
+<h1>Reddit Wallpaper!</h1>
+<center>
+<table>
+<tr>
+	<td ><input type='checkbox' name='subreddits' value='wallpaper' checked>Wallpaper</td>
+	<td ><input type='checkbox' name='subreddits' value='wallpapers' checked>Wallpapers</td>
+</tr>
+<tr>
+	<td ><input type='checkbox' name='subreddits' value='WQHD_Wallpaper' checked>WQHD_Wallpaper</td>
+	<td ><input type='checkbox' name='subreddits' value='MinimalWallpaper' checked>Minimal Wallpaper</td>
+</tr>
+</table>
+</td>
+</table>
+
+<table>
+<tr>
+<td>Sort:</td>
+	<td>
+		<select id='sort' id='sort' onchange='sortChange()'>
+			<option value='hot' selected>Hot</option>
+			<option value='top'>Top</option>
+			<option value='new'>New</option>
+		</select>
+	</td>
+</tr>
+
+<tr>
+<td>Time:</td>
+	<td>
+		<select id='time' id='time' disabled>
+			<option value='day'>Day</option>
+			<option value='week'>Week</option>
+			<option value='month'>Month</option>
+			<option value='year'>Year</option>
+			<option value='all'>All Time</option>
+		</select>
+	</td>
+</tr>
+
+<table>
+<tr>
+<td>
+<button type='button' onclick='refresh()'>Refresh</button>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+	<td>
+		{% if logout_url is defined %}
+			Hi, {{ username }}.<br />
+			<a href='{{ logout_url }}'><button type='button'>Logout</button></a>
+			<a href='/favorites'><button type='button'>Favorites</button></a>
+		{% else %}
+			<a href='{{ login_url }}'><button type='button'>Login</button></a>
+		{% endif %}
+	</td>
+</tr>
+</table>
+
+</center>
+</header>
+
+<center>
+<div>
+<ul id='main_div'>
+</ul>
+</div>
+<button onclick='loadMore()' type='button'>Load More!</button>
+</center>
+</body>
+{% endautoescape %}
