@@ -6,11 +6,15 @@ import json
 import exceptions
 import logging
 import traceback
+import time
 
-api_base = 'https://api.imgur.com/3/'
-image_endpoint = api_base + 'image'
-album_endpoint = api_base + 'album'
+api_base = 'https://api.imgur.com'
+image_endpoint = api_base + '/3/image'
+album_endpoint = api_base + '/3/album'
+auth_endponit  = api_base + '/oauth2/authorize'
+token_endpoint = api_base + '/oauth2/token'
 client_id = 'a1625eb9cf145b1'
+client_secret = '7f028de499b790ecccb10e2eefecb5aa6c0ad614'
 auth = ('Authorization','Client-ID %s' % client_id)
 extensions = ['.jpg','.jpeg','.gif','.png']
 
@@ -87,11 +91,11 @@ def api_call(endpoint, payload=None):
 	try:	
 		return urllib2.urlopen(req)
 	except urllib2.HTTPError, e:
-	    logging.error('HTTPError = ' + str(e.code))
+		logging.error('HTTPError = ' + str(e.code))
 	except urllib2.URLError, e:
-	    logging.error('URLError = ' + str(e.reason))
+		logging.error('URLError = ' + str(e.reason))
 	except Exception:
-	    logging.error('generic exception: ' + traceback.format_exc())
+		logging.error('generic exception: ' + traceback.format_exc())
 
 def upload_image_from_url(url, album='', name='', title='', description=''):
 	""" Uploads an image from a url """
@@ -148,6 +152,82 @@ def thumbnail(link, size = "small"):
 		url = link[:pos]
 		ext = link[pos:]
 		return url + ImageInfo.thumbnail_sizes[size] + ext
+
+class Account():
+	def __init__(
+			self,
+			username,
+			access_token,
+			access_expiration,
+			refresh_token):
+
+		self.username = username
+		self.access_token = access_token
+		self.access_expiration = access_expiration
+		self.refresh_token = refresh_token
+
+
+	def refresh_tokens(self):
+		payload = {
+			'client_id':client_id,
+			'client_secret':client_secret,
+			'grant_type':'refresh_token',
+			'refresh_token':self.refresh_token
+			}
+
+		response = api_call(token_endpoint,payload)
+
+		if response is not None:
+			data = response.read()
+			print data			
+			content = json.loads(data)
+
+			self.access_expiration = int(time.time()) + int(content['expires_in'])
+			self.access_token = content['access_token']
+			self.refresh_token = content['refresh_token']
+
+	def is_access_expired(self):
+		return time.time() > self.access_expiration
+
+	@staticmethod
+	def from_refresh_token(refresh_token):
+		payload = {
+			'client_id':client_id,
+			'client_secret':client_secret,
+			'grant_type':'refresh_token',
+			'refresh_token':refresh_token
+			}
+
+		response = api_call(token_endpoint,payload)
+
+		if response is not None:
+			data = response.read()
+			print data			
+			content = json.loads(data)
+
+			access_expiration = int(time.time()) + int(content['expires_in'])
+
+			return Account(
+				content['account_username'],
+				content['access_token'],
+				access_expiration,
+				content['refresh_token'])
+			
+
+	@staticmethod
+	def from_authorization_code(code):
+		payload = {
+			'client_id':client_id,
+			'client_secret':client_secret,
+			'grant_type':'authorization_code',
+			'code':code
+			}
+		response = api_call(token_endpoint,payload)
+
+		if response is not None:
+			content = json.loads(response.read())
+			
+
 
 class ImageInfo():
 	""" Class to handle information about imgur images """
