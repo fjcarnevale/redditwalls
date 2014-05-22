@@ -15,7 +15,7 @@ auth_endponit  = api_base + '/oauth2/authorize'
 token_endpoint = api_base + '/oauth2/token'
 client_id = 'a1625eb9cf145b1'
 client_secret = '7f028de499b790ecccb10e2eefecb5aa6c0ad614'
-auth = ('Authorization','Client-ID %s' % client_id)
+app_auth_val = 'Client-ID %s' % client_id
 extensions = ['.jpg','.jpeg','.gif','.png']
 
 class InvalidImgurUrlException(Exception):
@@ -77,8 +77,7 @@ def extract_imgur_id(url):
 	else:
 		raise InvalidImgurUrlException("Failed to parse Imgur url")
 
-
-def api_call(endpoint, payload=None):
+def api_call(endpoint, payload=None, auth_val=app_auth_val):
 	"""Executes an imgur api call to the image endpoint"""
 
 	req = urllib2.Request(endpoint)
@@ -86,7 +85,7 @@ def api_call(endpoint, payload=None):
 	if payload is not None:
 		req.add_data(urllib.urlencode(payload))
 			
-	req.add_header(auth[0], auth[1])
+	req.add_header('Authorization', auth_val)
 
 	try:	
 		return urllib2.urlopen(req)
@@ -111,12 +110,15 @@ def upload_image_from_url(url, album='', name='', title='', description=''):
 	payload = {'image':url, 'type':'URL'}
 	response = api_call(image_endpoint, payload)
 	
-	if response is not None and response.getcode() == 200:
-		result = json.loads(response.read())
+	if response is None or response.getcode() != 200:
+		return None
 
-		if result['success']:
-			return ImageInfo.from_json(result['data'])
+	result = json.loads(response.read())
 
+	if not result['success']:
+		return None
+
+	return ImageInfo.from_json(result['data'])
 
 def upload_image_from_file(path, album='', name='', title='', description=''):
 	""" Uploads an image from a file """
@@ -127,18 +129,22 @@ def upload_image_from_file(path, album='', name='', title='', description=''):
 	payload = {'image':content, 'type':'file'}
 	response = api_call(image_endpoint, payload)
 
-	if response is not None and response.getcode() == 200:
-		result = json.loads(response.read())
+	if response is None or response.getcode() != 200:
+		return None
+	
+	result = json.loads(response.read())
 
-		if result['success']:
-			return ImageInfo.from_json(result['data'])
+	if not result['success']:
+		return None
+
+	return ImageInfo.from_json(result['data'])
 
 def delete_image(deletehash):
 	""" Deletes an image """
 	url = image_endpoint + '/' + deletehash
 
 	req = RequestWithMethod(url,'DELETE')
-	req.add_header(auth[0], auth[1])	
+	req.add_header('Authorization', app_auth_val)	
 	response = urllib2.urlopen(req)
 
 	if response.getcode() == 200:
@@ -166,7 +172,6 @@ class Account():
 		self.access_expiration = access_expiration
 		self.refresh_token = refresh_token
 
-
 	def refresh_tokens(self):
 		payload = {
 			'client_id':client_id,
@@ -188,6 +193,9 @@ class Account():
 
 	def is_access_expired(self):
 		return time.time() > self.access_expiration
+		
+	def get_auth(self):
+		return 'Bearer %s' % self.access_token
 
 	@staticmethod
 	def from_refresh_token(refresh_token):
@@ -227,8 +235,6 @@ class Account():
 		if response is not None:
 			content = json.loads(response.read())
 			
-
-
 class ImageInfo():
 	""" Class to handle information about imgur images """
 
@@ -301,15 +307,16 @@ class ImageInfo():
 	@staticmethod
 	def from_id(img_id):
 		""" Builds an ImageInfo based on a id """
-		url = image_endpoint + '/' + img_id
-		req = urllib2.Request(url)
-		req.add_header(auth[0], auth[1])	
-		response = urllib2.urlopen(req)
+		endpoint = image_endpoint + '/' + img_id
+	
+		response = api_call(endpoint)
 		
 		parsed = json.loads(response.read())
 
-		if parsed['success']:
-			return ImageInfo.from_json(parsed['data'])
+		if not parsed['success']:
+			return None
+			
+		return ImageInfo.from_json(parsed['data'])
 
 	@staticmethod
 	def from_url(url):
@@ -325,7 +332,6 @@ class ImageInfo():
 
 		return ImageInfo.from_id(img_id)
 
-	
 class Album():
 	""" Class to handle information about imgur albums """
 
@@ -362,6 +368,26 @@ class Album():
 		self.images = images
 		self.deletehash = deletehash
 		self.link = link
+		
+	# Adds images to the album
+	# img_ids	- image ids
+	# acct		- Account of user
+	#
+	# returns 	- True for success, False otherwise
+	def add_image(self, img_ids, acct):
+		payload = {'ids':img_ids}
+		
+		endpoint = '%s/%s/add' % (album_endpoint, self.album_id)
+		auth = acct.get_auth()
+		
+		response = api_call(endpoint, payload, auth)
+		
+		if response is None:
+			return False
+
+		parsed = json.loads(response.read())
+
+		return parsed['data'] and parsed['success']
 
 	@staticmethod
 	def create_new_album(
@@ -370,7 +396,8 @@ class Album():
 				description = '',
 				privacy = '',
 				layout = '',				
-				cover = ''):
+				cover = '',
+				acct = None):		
 
 		""" Creates a new album """
 		payload = { 
@@ -381,14 +408,22 @@ class Album():
 			'layout':layout,
 			'cover':cover
 			}
-
-		response = api_call(album_endpoint, payload)
+			
+		auth = app_auth_val
+		if acct is not None:
+			auth = 'Bearer %s' % acct.access_token
+			
+		response = api_call(album_endpoint, payload, auth)
 		
-		if response is not None:
-			parsed = json.loads(response.read())
+		if response is None:
+			return None
 
-			if parsed['success']:
-				return Album.from_json(parsed['data'])	
+		parsed = json.loads(response.read())
+
+		if not parsed['success']:
+			return None
+
+		return Album.from_json(parsed['data'])	
 		
 			
 	@staticmethod
@@ -420,15 +455,18 @@ class Album():
 	@staticmethod
 	def from_id(album_id):
 		""" Builds an Album based on a id """
-		url = album_endpoint + '/' + album_id
-		req = urllib2.Request(url)
-		req.add_header(auth[0], auth[1])	
-		response = urllib2.urlopen(req)
+		endpoint = album_endpoint + '/' + album_id
+		response = api_call(endpoint)
+
+		if response is None:
+			return None
 		
 		parsed = json.loads(response.read())
 
-		if parsed['success']:
-			return Album.from_json(parsed['data'])
+		if not parsed['success']:
+			return None
+		
+		return Album.from_json(parsed['data'])
 
 	@staticmethod
 	def from_url(url):

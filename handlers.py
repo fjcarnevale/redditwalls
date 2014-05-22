@@ -26,7 +26,7 @@ class Index(webapp2.RequestHandler):
 		template_values = {}
 		if(user):
 			template_values['username'] = user.nickname()
-			template_values['logout_url'] = users.create_logout_url('/')	
+			template_values['logout_url'] = users.create_logout_url('/')
 		else:
 			template_values['login_url'] = users.create_login_url('/')
 
