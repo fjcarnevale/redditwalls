@@ -93,11 +93,16 @@ class Favorite(BaseHandler):
 		username = self.session.get('username', '')
 
 		# check that wallpaper exists
-		if Wallpaper.get_by_id(wall_id):
+		wall = Wallpaper.get_by_id(wall_id)
+		if wall is not None:
 			user = User.get_by_id(username)
 			if user is not None:
 				if action == 'add':				
 					user.add_favorite(wall_id)
+
+					acct = Imgur.Account(user.username, user.access_token, 0, user.refresh_token)
+					album = Imgur.Album.from_id(user.album)
+					album.add_image(Imgur.extract_imgur_id(wall.image_link), acct)
 				else:
 					user.remove_favorite(wall_id)
 
@@ -144,8 +149,7 @@ class OAuthHandler(BaseHandler):
 		user = User.get_by_id(acct.username)
 
 		if user is None:
-			user = User(key=User.user_key(acct.username))
-			user.put()
+			User.create_user(acct.username, acct.access_token, acct.refresh_token)
 
 		self.session['username'] = acct.username
 
