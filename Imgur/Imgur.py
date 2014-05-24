@@ -159,6 +159,18 @@ def thumbnail(link, size = "small"):
 		ext = link[pos:]
 		return url + ImageInfo.thumbnail_sizes[size] + ext
 
+def get_login_url(response_type = 'token', state = ''):
+	url = auth_endponit
+	url += '?client_id=%s' % client_id
+	url += '&response_type=%s' % response_type
+	#url += '&state=%s' % state
+
+	#TODO implement state
+	# including state seems to mess up the callback URL
+	# with state=# and no & before the access_token
+
+	return url
+
 class Account():
 	def __init__(
 			self,
@@ -210,7 +222,7 @@ class Account():
 
 		if response is not None:
 			data = response.read()
-			print data			
+
 			content = json.loads(data)
 
 			access_expiration = int(time.time()) + int(content['expires_in'])
@@ -230,10 +242,22 @@ class Account():
 			'grant_type':'authorization_code',
 			'code':code
 			}
+
 		response = api_call(token_endpoint,payload)
 
 		if response is not None:
 			content = json.loads(response.read())
+
+			if not 'username' in content:
+				return Account.from_refresh_token(content['refresh_token'])
+
+			access_expiration = int(time.time()) + int(content['expires_in'])
+
+			return Account(
+				content['username'],
+				content['access_token'],
+				access_expiration,
+				content['refresh_token'])
 			
 class ImageInfo():
 	""" Class to handle information about imgur images """

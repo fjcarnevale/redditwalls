@@ -8,9 +8,14 @@ from reddit import RedditPost
 from Imgur import Imgur
 
 class Account(ndb.Model):
-	user = ndb.UserProperty()
+	username = ndb.StringProperty()
 	favorites = ndb.StringProperty(repeated=True)
 	album = ndb.StringProperty()
+	
+	def __init__( username, favorites = [], album = ''):
+		self.username = username
+		self.favorites = favorites
+		self.album = album
 
 	@staticmethod
 	def account_key(name):
