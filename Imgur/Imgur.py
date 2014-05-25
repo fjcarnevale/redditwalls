@@ -417,13 +417,11 @@ class Album():
 
 		return parsed['data'] and parsed['success']
 
-	def remove_image(self, img_id, acct):
-		payload = {'ids':img_id}
-		
-		endpoint = '%s/%s/remove_images' % (album_endpoint, self.album_id)
+	def remove_image(self, img_id, acct):		
+		endpoint = '%s/%s/remove_images?ids=%s' % (album_endpoint, self.album_id, img_id)
 		auth = acct.get_auth()
 		
-		response = api_call(endpoint, payload, auth, 'DELETE')
+		response = api_call(endpoint=endpoint, auth_val=auth, method='DELETE')
 		
 		if response is None:
 			return False
@@ -450,7 +448,7 @@ class Album():
 			'title':title,
 			#description':description,
 			#'privacy':privacy,
-			#'layout':layout,
+			'layout':layout,
 			#'cover':cover
 			}
 			
