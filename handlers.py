@@ -97,14 +97,18 @@ class Favorite(BaseHandler):
 		if wall is not None:
 			user = User.get_by_id(username)
 			if user is not None:
+
+				acct = user.to_imgur_account()
+				album = Imgur.Album.from_id(user.album)
+
 				if action == 'add':				
 					user.add_favorite(wall_id)
-
-					acct = Imgur.Account(user.username, user.access_token, 0, user.refresh_token)
-					album = Imgur.Album.from_id(user.album)
 					album.add_image(Imgur.extract_imgur_id(wall.image_link), acct)
 				else:
 					user.remove_favorite(wall_id)
+					img_id = Imgur.extract_imgur_id(wall.image_link)
+					print 'Removing %s' % img_id
+					album.remove_image(img_id, acct)
 
 		self.response.write(action + ' ' + wall_id)
 
@@ -149,7 +153,7 @@ class OAuthHandler(BaseHandler):
 		user = User.get_by_id(acct.username)
 
 		if user is None:
-			User.create_user(acct.username, acct.access_token, acct.refresh_token)
+			User.create_user(acct.username, acct.access_token, acct.refresh_token, acct.access_expiration)
 
 		self.session['username'] = acct.username
 

@@ -36,17 +36,18 @@ class Wallpaper(ndb.Model):
 				# TODO handle albums
 				pass
 		else:
+			pass # don't upload new stuff for now
 			# Try and upload from the url
-			info = Imgur.upload_image_from_url(url)
+			#info = Imgur.upload_image_from_url(url)
 
-			if info is not None:
-				logging.info('Uploaded image id:%s\tdeletehash:%s' % (info.img_id, info.deletehash))
-				w = Wallpaper(key=wallpaper_key(post.name))
-				w.name = post.name
-				w.reddit_link = post.post_url
-				w.image_link = info.link
-				w.put()
-				return w
+			#if info is not None:
+			#	logging.info('Uploaded image id:%s\tdeletehash:%s' % (info.img_id, info.deletehash))
+			#	w = Wallpaper(key=wallpaper_key(post.name))
+			#	w.name = post.name
+			#	w.reddit_link = post.post_url
+			#	w.image_link = info.link
+			#	w.put()
+			#	return w
 
 		return None				
 

@@ -77,10 +77,14 @@ def extract_imgur_id(url):
 	else:
 		raise InvalidImgurUrlException("Failed to parse Imgur url")
 
-def api_call(endpoint, payload=None, auth_val=app_auth_val):
+def api_call(endpoint, payload=None, auth_val=app_auth_val, method=None):
 	"""Executes an imgur api call to the image endpoint"""
 
 	req = urllib2.Request(endpoint)
+
+	if method is not None:
+		print 'Using method %r' % method
+		req.get_method = lambda: method
 
 	if payload is not None:
 		req.add_data(urllib.urlencode(payload))
@@ -413,6 +417,23 @@ class Album():
 
 		return parsed['data'] and parsed['success']
 
+	def remove_image(self, img_id, acct):
+		payload = {'ids':img_id}
+		
+		endpoint = '%s/%s/remove_images' % (album_endpoint, self.album_id)
+		auth = acct.get_auth()
+		
+		response = api_call(endpoint, payload, auth, 'DELETE')
+		
+		if response is None:
+			return False
+
+		parsed = json.loads(response.read())
+
+		print parsed
+
+		return parsed['data'] and parsed['success']
+
 	@staticmethod
 	def create_new_album(
 				img_ids = [],
@@ -425,12 +446,12 @@ class Album():
 
 		""" Creates a new album """
 		payload = { 
-			'ids':img_ids,
+			#'ids':img_ids,
 			'title':title,
-			'description':description,
-			'privacy':privacy,
-			'layout':layout,
-			'cover':cover
+			#description':description,
+			#'privacy':privacy,
+			#'layout':layout,
+			#'cover':cover
 			}
 			
 		auth = app_auth_val
