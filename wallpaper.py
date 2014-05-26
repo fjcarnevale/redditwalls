@@ -25,15 +25,24 @@ class Wallpaper(ndb.Model):
 
 		if Imgur.is_imgur_link(url):
 			if Imgur.is_image(url):
-				info = Imgur.ImageInfo.from_url(url)
+
+				# If the URL already has the image extension, just use the URL
+				# Otherwise, look it up
+				link = url
+				if not any(ext in url for ext in Imgur.extensions):
+					info = Imgur.ImageInfo.from_url(url)
+					link = info.link
+
 				w = Wallpaper(key=wallpaper_key(post.name))
 				w.name = post.name
 				w.reddit_link = post.post_url
-				w.image_link = info.link
+				w.image_link = link
 				w.put()
 				return w
 			else:
 				# TODO handle albums
+				# probably just grap the cover photo, maybe add class for albums
+				# or convert wallpaper class to Post class as a catch-all for reddit image posts
 				pass
 		else:
 			pass # don't upload new stuff for now
