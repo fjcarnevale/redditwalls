@@ -6,7 +6,7 @@ threadsafe: true
 
 handlers:
 - url: /images
-  static_dir: images
+  static_dir: static/images
 
 - url: /.*
   script: redditwalls.application

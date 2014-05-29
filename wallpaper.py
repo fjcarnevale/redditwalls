@@ -30,7 +30,7 @@ class Wallpaper(ndb.Model):
 				# Otherwise, look it up
 				link = url
 				if not any(ext in url for ext in Imgur.extensions):
-					info = Imgur.ImageInfo.from_url(url)
+					info = Imgur.Image.from_url(url)
 					link = info.link
 
 				w = Wallpaper(key=wallpaper_key(post.name))

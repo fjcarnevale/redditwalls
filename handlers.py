@@ -57,7 +57,7 @@ class Index(BaseHandler):
 		else:
 			template_values['login_url'] = Imgur.get_login_url(response_type='code')
 
-		template = JINJA_ENVIRONMENT.get_template('index.html')
+		template = JINJA_ENVIRONMENT.get_template('html/index.html')
 		self.response.write(template.render(template_values))
 
 class Results(BaseHandler):
@@ -82,7 +82,7 @@ class Results(BaseHandler):
 			if user is not None:
 				template_values['favorites'] = user.favorites
 		
-		template = JINJA_ENVIRONMENT.get_template('results.html')
+		template = JINJA_ENVIRONMENT.get_template('html/results.html')
 		self.response.write(template.render(template_values))
 
 class Favorite(BaseHandler):
@@ -135,7 +135,7 @@ class DisplayFavorites(BaseHandler):
 						'thumbnails':thumbnails
 					  }
 
-			template = JINJA_ENVIRONMENT.get_template('favorites.html')
+			template = JINJA_ENVIRONMENT.get_template('html/favorites.html')
 			self.response.write(template.render(template_values))
 	
 class OAuthHandler(BaseHandler):

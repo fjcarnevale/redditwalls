@@ -122,7 +122,7 @@ def upload_image_from_url(url, album='', name='', title='', description=''):
 	if not result['success']:
 		return None
 
-	return ImageInfo.from_json(result['data'])
+	return Image.from_json(result['data'])
 
 def upload_image_from_file(path, album='', name='', title='', description=''):
 	""" Uploads an image from a file """
@@ -141,7 +141,7 @@ def upload_image_from_file(path, album='', name='', title='', description=''):
 	if not result['success']:
 		return None
 
-	return ImageInfo.from_json(result['data'])
+	return Image.from_json(result['data'])
 
 def delete_image(deletehash):
 	""" Deletes an image """
@@ -157,11 +157,11 @@ def delete_image(deletehash):
 
 def thumbnail(link, size = "small"):
 	""" Creates a thumbnail url """
-	if size in ImageInfo.thumbnail_sizes:
+	if size in Image.thumbnail_sizes:
 		pos = link.rfind('.')
 		url = link[:pos]
 		ext = link[pos:]
-		return url + ImageInfo.thumbnail_sizes[size] + ext
+		return url + Image.thumbnail_sizes[size] + ext
 
 def get_login_url(response_type = 'token', state = ''):
 	url = auth_endponit
@@ -211,6 +211,9 @@ class Account():
 		return time.time() > self.access_expiration
 		
 	def get_auth(self):
+		if is_access_expired():
+			refresh_tokens()
+			
 		return 'Bearer %s' % self.access_token
 
 	@staticmethod
@@ -263,7 +266,7 @@ class Account():
 				access_expiration,
 				content['refresh_token'])
 			
-class ImageInfo():
+class Image():
 	""" Class to handle information about imgur images """
 
 	thumbnail_sizes = { 'small':'t',
@@ -309,12 +312,12 @@ class ImageInfo():
 			
 	@staticmethod
 	def from_json(data):
-		""" Builds an ImageInfo from json """
+		""" Builds an Image from json """
 		str_dict =  defaultdict(str,data)
 		int_dict =  defaultdict(int,data)
 		bool_dict = defaultdict(bool,data)
 
-		return ImageInfo(
+		return Image(
 			img_id = str_dict['id'],
 			title = str_dict['title'],
 			description = str_dict['description'],
@@ -334,7 +337,7 @@ class ImageInfo():
 
 	@staticmethod
 	def from_id(img_id):
-		""" Builds an ImageInfo based on a id """
+		""" Builds an Image based on a id """
 		endpoint = image_endpoint + '/' + img_id
 	
 		response = api_call(endpoint)
@@ -344,7 +347,7 @@ class ImageInfo():
 		if not parsed['success']:
 			return None
 			
-		return ImageInfo.from_json(parsed['data'])
+		return Image.from_json(parsed['data'])
 
 	@staticmethod
 	def from_url(url):
@@ -358,7 +361,7 @@ class ImageInfo():
 		if '.' in img_id:
 			img_id = img_id[:img_id.rfind('.')]
 
-		return ImageInfo.from_id(img_id)
+		return Image.from_id(img_id)
 
 class Album():
 	""" Class to handle information about imgur albums """
@@ -479,7 +482,7 @@ class Album():
 		images = []
 		if 'images' in data:
 			for image in data['images']:
-				images.append(ImageInfo.from_json(image))
+				images.append(Image.from_json(image))
 
 		return Album(
 			album_id = str_dict['id'],
