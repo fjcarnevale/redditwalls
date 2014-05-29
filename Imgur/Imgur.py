@@ -212,8 +212,9 @@ class Account():
 		
 	def get_auth(self):
 		if is_access_expired():
+			logging.info('Access expired for user %s, refreshing tokens' % self.username)
 			refresh_tokens()
-			
+
 		return 'Bearer %s' % self.access_token
 
 	@staticmethod
