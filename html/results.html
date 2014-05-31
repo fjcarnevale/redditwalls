@@ -1,18 +1,19 @@
 {% autoescape true %}
-{% for wall in wallpapers %}
-<li>
-<div class="Image">
-<a href='http://www.reddit.com{{ wall.reddit_link }}' target="_blank" class='Reddit'><img class='Reddit' src='/images/reddit_button.gif' width="12" height="12"/></a>
-{% if favorites is defined %}
-	{% if wall.name in favorites %}
-		<input class='Favorite' favorite="True" type='image' id='{{ wall.name }}_button' value='{{wall.name}}' onClick='favorite(this);' src='/images/heart.gif' width="12" height="12"/>
-	{% else %}
-		<input class='Favorite' favorite="False" type='image' id='{{ wall.name }}_button' value='{{wall.name}}' onClick='favorite(this);' src='/images/empty_heart.gif'/>
-	{% endif %}
-{% endif %}
-
-<a href='{{ wall.image_link }}' target="_blank"><img id='{{ wall.name }}' src={{ thumbnails[wall.name] }}/></a>
-</div>	
-</li>
-{% endfor %}
+{
+	"success":"true",
+	"data":
+	{
+	
+	"images":[
+		{% for wall in wallpapers %}
+			{
+			"name":"{{wall.name}}",
+			"reddit_link":"www.reddit.com{{wall.reddit_link}}",
+			"image_link":"{{wall.image_link}}"
+			}
+		{% if not loop.last %},{% endif %}
+		{% endfor %}
+	]
+	}
+}
 {% endautoescape %}
