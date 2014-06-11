@@ -81,6 +81,7 @@ class Results(BaseHandler):
 			user = User.get_by_id(username)
 			if user is not None:
 				template_values['favorites'] = user.favorites
+				template_values['username'] = username
 		
 		template = JINJA_ENVIRONMENT.get_template('html/results.html')
 		self.response.write(template.render(template_values))

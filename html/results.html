@@ -1,6 +1,6 @@
 {% autoescape true %}
 {
-	"success":"true",
+	"success":true,
 	"data":
 	{
 	
@@ -9,7 +9,23 @@
 			{
 			"name":"{{wall.name}}",
 			"reddit_link":"www.reddit.com{{wall.reddit_link}}",
-			"image_link":"{{wall.image_link}}"
+			"image_link":"{{wall.image_link}}",
+			"thumbnail":"{{thumbnails[wall.name]}}",
+
+			{% if username is defined %}
+				"username":"{{username}}"
+			{% else %}
+				"username":""
+			{% endif %}
+
+			,
+
+			{% if favorites is defined and wall.name in favorites%}
+				"favorite":true
+			{% else %}
+				"favorite":false
+			{% endif %}
+
 			}
 		{% if not loop.last %},{% endif %}
 		{% endfor %}
