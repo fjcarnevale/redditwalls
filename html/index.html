@@ -168,7 +168,7 @@ function parse_results(response_text)
 
 		for(var i = 0; i < images.length; i++)
 		{
-			image_html = "<li><div class='Image'>";
+			image_html = "<div class='Image'>";
 			image_html += "<a href='http://www.reddit.com" + images[i]["reddit_link"] + "' target='_blank' class='Reddit'>";
 			image_html += "<img class='Reddit' src='/images/reddit_button.gif' width='12' height='12'/></a>";
 
@@ -190,7 +190,7 @@ function parse_results(response_text)
 
 			image_html += "<a href='" + images[i]["image_link"] + "' target='_blank'>";
 			image_html += "<img id='" + images[i]["name"] + "' src='" + images[i]["thumbnail"] + "'/></a>";
-			image_html += "</div></li>";
+			image_html += "</div>";
 
 
 			document.getElementById("main_div").innerHTML += image_html;
@@ -331,9 +331,7 @@ function favorite(button)
 </header>
 
 <center>
-<div>
-<ul id='main_div'>
-</ul>
+<div id='main_div'>
 </div>
 <button onclick='loadMore()' type='button'>Load More!</button>
 </center>

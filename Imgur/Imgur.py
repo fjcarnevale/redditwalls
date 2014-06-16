@@ -343,6 +343,9 @@ class Image():
 	
 		response = api_call(endpoint)
 		
+		if not response:
+			return None
+			
 		parsed = json.loads(response.read())
 
 		if not parsed['success']:
