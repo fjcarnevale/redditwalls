@@ -79,6 +79,11 @@ function init()
 	refresh();
 }
 
+function enable_load_button(enable)
+{
+  document.getElementById("load_more_button").disabled = !enable;
+}
+
 function buildRequest()
 {
 	var request = "results?"
@@ -108,16 +113,17 @@ function buildRequest()
 		request = request.substring(0, request.length - 1)
 	}
 
-	return request;	
+	return request;
 }
 
 function refresh()
 {
 	lastRequest = buildRequest();
+	enable_load_button(false);
 	performRequest(lastRequest, true);
 }
 
-function loadMore()
+function loadMore(button)
 {
 	var last_id = '';
 	var images = document.getElementsByTagName("img");
@@ -127,6 +133,8 @@ function loadMore()
 		var lastChild = images[images.length - 1];
 		last_id = lastChild.getAttribute('id');
 	}
+	
+	enable_load_button(false);
 
 	request = lastRequest + "&after="+last_id;
 	performRequest(request, false);
@@ -150,6 +158,8 @@ function performRequest(request, clear)
 			}
 
 			parse_results(xmlhttp.responseText);
+		
+		  enable_load_button(true);
 		}
 	}
 
@@ -333,7 +343,7 @@ function favorite(button)
 <center>
 <div id='main_div'>
 </div>
-<button onclick='loadMore()' type='button'>Load More!</button>
+<button id="load_more_button" onclick='loadMore(this)' type='button'>Load More!</button>
 </center>
 </body>
 {% endautoescape %}
