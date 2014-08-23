@@ -6,6 +6,7 @@ class User(ndb.Model):
 	username = ndb.StringProperty()
 	favorites = ndb.StringProperty(repeated=True)
 	album = ndb.StringProperty()
+	subreddits = ndb.StringProperty(repeated=True)
 	access_token = ndb.StringProperty()
 	access_expiration = ndb.IntegerProperty()
 	refresh_token = ndb.StringProperty()

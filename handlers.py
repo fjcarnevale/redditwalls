@@ -21,6 +21,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 imgur_login = 'https://api.imgur.com/oauth2/authorize?client_id=&response_type=token&state='
 
+default_subreddits = ['minimalwallpaper','wallpaper','wallpapers']
+
 # Sourced from https://webapp-improved.appspot.com/api/webapp2_extras/sessions.html
 class BaseHandler(webapp2.RequestHandler):
     def dispatch(self):
@@ -55,8 +57,11 @@ class Index(BaseHandler):
 				self.session['username'] = ''
 
 		else:
+			
 			template_values['login_url'] = Imgur.get_login_url(response_type='code')
 
+
+		template_values['subreddits'] = default_subreddits
 		template = JINJA_ENVIRONMENT.get_template('html/index.html')
 		self.response.write(template.render(template_values))
 
