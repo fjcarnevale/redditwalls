@@ -7,73 +7,49 @@
 </head>
 <body>
 
-<div id="header">
-<center>
+<div id="header-container">
+   <div id="header">
+      <div>
+	      <input type="text" id="subreddit-input" placeholder="Add a subreddit"></input>
+         <div id="subreddits">
+         {% for sub in subreddits %}
+	         <div class='subreddit'>{{ sub }}</div>
+         {% endfor %}
+         </div>
+      </div>
 
-<div>
-	<input type="text" id="subreddit-input" placeholder="Add a subreddit"></input>
-   <div id="subreddits">
-   {% for sub in subreddits %}
-	   <div class='subreddit'>{{ sub }}</div>
-   {% endfor %}
+      <div id="controls">
+         Sort:
+         <select id='sort' id='sort'>
+	         <option value='hot' selected>Hot</option>
+	         <option value='top'>Top</option>
+	         <option value='new'>New</option>
+         </select>
+
+         Time:
+         <select id='time' disabled>
+	         <option value='day'>Day</option>
+	         <option value='week'>Week</option>
+	         <option value='month'>Month</option>
+	         <option value='year'>Year</option>
+	         <option value='all'>All Time</option>
+         </select>
+
+         <button type='button' onclick='refresh()'>Refresh</button>
+
+         {% if logout_url is defined %}
+			      <a href='{{ logout_url }}'><button type='button'>Logout</button></a>
+			      <a href='/favorites'><button type='button'>Favorites</button></a>
+		      {% else %}
+			      <a href='{{ login_url }}'><button type='button'>Login</button></a>
+	      {% endif %}
+      </div>
    </div>
 </div>
 
-
-<table>
-<tr>
-<td>Sort:</td>
-	<td>
-		<select id='sort' id='sort'>
-			<option value='hot' selected>Hot</option>
-			<option value='top'>Top</option>
-			<option value='new'>New</option>
-		</select>
-	</td>
-</tr>
-
-<tr>
-<td>Time:</td>
-	<td>
-		<select id='time' disabled>
-			<option value='day'>Day</option>
-			<option value='week'>Week</option>
-			<option value='month'>Month</option>
-			<option value='year'>Year</option>
-			<option value='all'>All Time</option>
-		</select>
-	</td>
-</tr>
-
-<table>
-<tr>
-<td>
-<button type='button' onclick='refresh()'>Refresh</button>
-</td>
-</tr>
-</table>
-
-<table>
-<tr>
-	<td>
-		{% if logout_url is defined %}
-			Hi, {{ username }}.<br />
-			<a href='{{ logout_url }}'><button type='button'>Logout</button></a>
-			<a href='/favorites'><button type='button'>Favorites</button></a>
-		{% else %}
-			<a href='{{ login_url }}'><button type='button'>Login</button></a>
-		{% endif %}
-	</td>
-</tr>
-</table>
-
-</center>
-</div>
-
-<center>
 <div id='main_div'>
 </div>
 <button id="load_more_button" onclick='loadMore(this)' type='button'>Load More!</button>
-</center>
+
 </body>
 {% endautoescape %}

@@ -43,6 +43,8 @@ var lastRequst = "";
 
 function refresh()
 {
+   $("#main_div").html("");
+
 	lastRequest = buildRequest();
    $("#load_more_button").prop("disabled",true);
 
@@ -68,7 +70,7 @@ function loadMore(button)
 
 	request = lastRequest + "&after="+last_id;
 
-	$.get(lastRequest,function(data)
+	$.get(request,function(data)
    {
       parse_results(data);
       $("#load_more_button").prop("disabled",false);
