@@ -1,13 +1,37 @@
 $(document).ready(function() {
-    $("#subreddit-input").keypress(function(e)
-    {
+   if($(this).val() != 'top')
+   {
+      $("#time").prop("disabled",true);
+   }
+   else
+   {
+      $("#time").prop("disabled",false);
+   }
+
+
+   $("#subreddit-input").keypress(function(e)
+   {
       if(e.which == 13)
       {
          var subreddit = $("#subreddit-input").val();
          $("#subreddits").append("<div class='subreddit'>" + subreddit + "</div>");
          $("#subreddit-input").val("");
       }
-    });
+   });
+
+   $("#sort").change(function()
+   {
+	   if($(this).val() != 'top')
+	   {
+         $("#time").prop("disabled",true);
+	   }
+	   else
+	   {
+         $("#time").prop("disabled",false);
+	   }
+   });
+
+   refresh();
 });
 
 $(document).on('click','.subreddit',function()
@@ -17,27 +41,50 @@ $(document).on('click','.subreddit',function()
 
 var lastRequst = "";
 
-function init()
+function refresh()
 {
-	sortChange();
-	refresh();
+	lastRequest = buildRequest();
+   $("#load_more_button").prop("disabled",true);
+
+   $.get(lastRequest,function(data)
+   {
+      parse_results(data);
+      $("#load_more_button").prop("disabled",false);
+   });
 }
 
-function enable_load_button(enable)
+function loadMore(button)
 {
-  document.getElementById("load_more_button").disabled = !enable;
+	var last_id = '';
+	var images = document.getElementsByTagName("img");
+
+	if(images.length > 0)
+	{
+		var lastChild = images[images.length - 1];
+		last_id = lastChild.getAttribute('id');
+	}
+	
+	$("#load_more_button").prop("disabled",true);
+
+	request = lastRequest + "&after="+last_id;
+
+	$.get(lastRequest,function(data)
+   {
+      parse_results(data);
+      $("#load_more_button").prop("disabled",false);
+   });
 }
 
 function buildRequest()
 {
-	var request = "results?"
+   var request = "results?"
 
-	var subreddits = [];
+   var subreddits = [];
       
-        $("#subreddits").children().each(function(index)
-        {
-	   subreddits.push($(this).text());
-        });
+   $("#subreddits").children().each(function(index)
+   {
+      subreddits.push($(this).text());
+   });
 	
 	for(var i = 0; i < subreddits.length; i++)
 	{
@@ -60,57 +107,6 @@ function buildRequest()
 	}
 
 	return request;
-}
-
-function refresh()
-{
-	lastRequest = buildRequest();
-	enable_load_button(false);
-	performRequest(lastRequest, true);
-}
-
-function loadMore(button)
-{
-	var last_id = '';
-	var images = document.getElementsByTagName("img");
-
-	if(images.length > 0)
-	{
-		var lastChild = images[images.length - 1];
-		last_id = lastChild.getAttribute('id');
-	}
-	
-	enable_load_button(false);
-
-	request = lastRequest + "&after="+last_id;
-	performRequest(request, false);
-}
-
-function performRequest(request, clear)
-{
-	var xmlhttp;
-	if (window.XMLHttpRequest)
-	{// code for IE7+, Firefox, Chrome, Opera, Safari
-		xmlhttp=new XMLHttpRequest();
-	}
-
-	xmlhttp.onreadystatechange=function()
-	{
-		if (xmlhttp.readyState==4 && xmlhttp.status==200)
-		{
-			if(clear)
-			{
-				document.getElementById("main_div").innerHTML = ""
-			}
-
-			parse_results(xmlhttp.responseText);
-		
-		  enable_load_button(true);
-		}
-	}
-
-	xmlhttp.open("GET",request,true);
-	xmlhttp.send();
 }
 
 function parse_results(response_text)
@@ -159,21 +155,6 @@ function parse_results(response_text)
 	
 }
 
-function sortChange()
-{
-	var sortComboBox =  document.getElementById('sort');
-	var val = sortComboBox.options[sortComboBox.selectedIndex].value;
-
-	if(val != 'top')
-	{
-		document.getElementById('time').disabled = true;
-	}
-	else
-	{
-		document.getElementById('time').disabled = false;
-	}
-}
-
 function favorite(button)
 {
 	var request = '/favorite?wall_id=' + button.value;
@@ -187,33 +168,37 @@ function favorite(button)
 		request += '&action=remove';
 	}
 
-	var xmlhttp;
-	if (window.XMLHttpRequest)
-	{// code for IE7+, Firefox, Chrome, Opera, Safari
-		xmlhttp=new XMLHttpRequest();
-	}
+   $.get(request,function(data)
+   {
+      result = data.split(' ');
+		var button_element = $('#' + result[1] + '_button');
 
-	xmlhttp.onreadystatechange=function()
-	{
-		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		if(result[0] == 'add')
 		{
-			result = xmlhttp.responseText.split(' ');
-			var button_element = document.getElementById(result[1] + '_button');
-
-			if(result[0] == 'add')
-			{
-				button_element.setAttribute("favorite","True");
-				button_element.setAttribute("src","/images/heart.gif");
-			}
-			else
-			{
-				button_element.setAttribute("favorite","False");
-				button_element.setAttribute("src","/images/empty_heart.gif");
-			}
-			
+         $(button_element).attr("favorite","True");
+         $(button_element).attr("src","/images/heart.gif");
 		}
-	}
-
-	xmlhttp.open("GET",request,true);
-	xmlhttp.send();
+		else
+		{
+			$(button_element).attr("favorite","False");
+         $(button_element).attr("src","/images/empty_heart.gif");
+		}
+   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

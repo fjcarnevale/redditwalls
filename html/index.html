@@ -5,9 +5,9 @@
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="/html/rsc/scripts.js"></script>
 </head>
-<body onload='init()'>
+<body>
 
-<header>
+<div id="header">
 <center>
 
 <div>
@@ -24,7 +24,7 @@
 <tr>
 <td>Sort:</td>
 	<td>
-		<select id='sort' id='sort' onchange='sortChange()'>
+		<select id='sort' id='sort'>
 			<option value='hot' selected>Hot</option>
 			<option value='top'>Top</option>
 			<option value='new'>New</option>
@@ -35,7 +35,7 @@
 <tr>
 <td>Time:</td>
 	<td>
-		<select id='time' id='time' disabled>
+		<select id='time' disabled>
 			<option value='day'>Day</option>
 			<option value='week'>Week</option>
 			<option value='month'>Month</option>
@@ -68,7 +68,7 @@
 </table>
 
 </center>
-</header>
+</div>
 
 <center>
 <div id='main_div'>

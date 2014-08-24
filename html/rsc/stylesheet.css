@@ -24,6 +24,21 @@
    border-style: solid;
 }
 
+#header
+{
+   background-color:#303030;
+   width: 100%;
+   position: fixed;
+   top: 0;
+   left: 0;
+   z-index:100000
+}
+
+#main_div
+{
+   margin-top: 150px;
+}
+
 body
 {
 	background-color:#303030;
