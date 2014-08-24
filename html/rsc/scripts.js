@@ -31,7 +31,11 @@ $(document).ready(function() {
 	   }
    });
 
-   refresh();
+   $(".refresh").click(refresh);
+
+   $("#loadmore-button").click(loadMore);
+
+   //refresh();
 });
 
 $(document).on('click','.subreddit',function()
@@ -40,40 +44,36 @@ $(document).on('click','.subreddit',function()
 });
 
 var lastRequst = "";
+var last_id = "";
 
 function refresh()
 {
    $("#main_div").html("");
 
 	lastRequest = buildRequest();
-   $("#load_more_button").prop("disabled",true);
+   $("#loadmore-button").removeClass("loadmore");
+   $("#loadmore-button").addClass("loadmore-disabled");
 
    $.get(lastRequest,function(data)
    {
       parse_results(data);
-      $("#load_more_button").prop("disabled",false);
+      $("#loadmore-button").removeClass("loadmore-disabled");
+      $("#loadmore-button").addClass("loadmore");
    });
 }
 
 function loadMore(button)
 {
-	var last_id = '';
-	var images = document.getElementsByTagName("img");
-
-	if(images.length > 0)
-	{
-		var lastChild = images[images.length - 1];
-		last_id = lastChild.getAttribute('id');
-	}
-	
-	$("#load_more_button").prop("disabled",true);
+	$("#loadmore-button").removeClass("loadmore");
+   $("#loadmore-button").addClass("loadmore-disabled");
 
 	request = lastRequest + "&after="+last_id;
 
 	$.get(request,function(data)
    {
       parse_results(data);
-      $("#load_more_button").prop("disabled",false);
+      $("#loadmore-button").removeClass("loadmore-disabled");
+      $("#loadmore-button").addClass("loadmore");
    });
 }
 
@@ -149,6 +149,8 @@ function parse_results(response_text)
 
 			document.getElementById("main_div").innerHTML += image_html;
 		}
+
+      last_id = images[images.length - 1]["name"];
 	}
 	else
 	{

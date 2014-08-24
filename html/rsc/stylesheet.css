@@ -1,9 +1,13 @@
-.subreddit
+.login,
+.logout,
+.refresh,
+.subreddit,
+.loadmore,
+.loadmore-disabled
 {
    display: inline-block;
    height:20px;
    width: auto;
-   background-color:#ff3300;
    font-family:arial;
    font-weight:bold;
    color:#ffffff;
@@ -20,46 +24,43 @@
 .subreddit:hover
 {
    border-width: 2px;
-   border-color: #333388;
+   border-color: #FFFFFF;
    border-style: solid;
+}
+
+
+.subreddit
+{
+   background-color:#ff3300;
 }
 
 .login
 {
-   display: inline-block;
-   height:20px;
-   width: auto;
    background-color:#2BF02B;
-   font-family:arial;
-   font-weight:bold;
-   color:#ffffff;
-   border-radius: 5px;
-   text-align:center;
-   margin-top:2px;
-   margin-right:5px;
-   
-   border-width: 2px;
-   border-color: transparent;
-   border-style: solid;
 }
 
 .logout
 {
-   display: inline-block;
-   height:20px;
-   width: auto;
    background-color:#F02B38;
-   font-family:arial;
-   font-weight:bold;
-   color:#ffffff;
-   border-radius: 5px;
-   text-align:center;
-   margin-top:2px;
-   margin-right:5px;
-   
-   border-width: 2px;
-   border-color: transparent;
-   border-style: solid;
+}
+
+.refresh,
+.loadmore
+{
+   background-color:#1087E8;
+}
+
+.loadmore-disabled
+{
+   background-color:#0C2E4A;
+   color:#555555;
+}
+
+.loadmore,
+.loadmore-disabled
+{
+   margin-top:30px;
+   margin-bottom:30px;
 }
 
 #header-container
@@ -80,6 +81,13 @@
    margin-right: auto;
    margin-bottom: 10px;
 }
+
+#controls
+{
+   margin-bottom: 10px;
+}
+
+
 
 #main_div
 {
