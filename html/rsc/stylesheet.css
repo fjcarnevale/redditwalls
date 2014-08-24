@@ -24,6 +24,44 @@
    border-style: solid;
 }
 
+.login
+{
+   display: inline-block;
+   height:20px;
+   width: auto;
+   background-color:#2BF02B;
+   font-family:arial;
+   font-weight:bold;
+   color:#ffffff;
+   border-radius: 5px;
+   text-align:center;
+   margin-top:2px;
+   margin-right:5px;
+   
+   border-width: 2px;
+   border-color: transparent;
+   border-style: solid;
+}
+
+.logout
+{
+   display: inline-block;
+   height:20px;
+   width: auto;
+   background-color:#F02B38;
+   font-family:arial;
+   font-weight:bold;
+   color:#ffffff;
+   border-radius: 5px;
+   text-align:center;
+   margin-top:2px;
+   margin-right:5px;
+   
+   border-width: 2px;
+   border-color: transparent;
+   border-style: solid;
+}
+
 #header-container
 {
    background-color:#303030;
@@ -37,7 +75,10 @@
 {
    background-color:#303030;
    width: 85%;
-   margin: auto;
+   margin-top: 20px;
+   margin-left: auto;
+   margin-right: auto;
+   margin-bottom: 10px;
 }
 
 #main_div
@@ -52,6 +93,31 @@
 {
    display: inline;
 }
+
+#sort,
+#time
+{
+   background: transparent;
+   width: auto;
+   padding: 5px;
+   font-size: 16px;
+   color: #ffffff;
+   line-height: 1;
+   height: 34px;
+}
+
+#sort option,
+#time option
+{
+   background-color: #303030;
+}
+
+#time[disabled]
+{
+   background-color: #080808;
+   color: #555555;
+}
+
 
 body
 {
@@ -87,8 +153,9 @@ img
 }
 .Image
 {
-    position:relative;
-    display:inline-block;
+   position:relative;
+   display:inline-block;
+   padding: 5px;
 }
 .Image a.Reddit
 {

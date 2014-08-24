@@ -173,17 +173,17 @@ function favorite(button)
    $.get(request,function(data)
    {
       result = data.split(' ');
-		var button_element = $('#' + result[1] + '_button');
+		var $button_element = $('#' + result[1] + '_button');
 
 		if(result[0] == 'add')
 		{
-         $(button_element).attr("favorite","True");
-         $(button_element).attr("src","/images/heart.gif");
+         $button_element.attr("favorite","True");
+         $button_element.attr("src","/images/heart.gif");
 		}
 		else
 		{
-			$(button_element).attr("favorite","False");
-         $(button_element).attr("src","/images/empty_heart.gif");
+			$button_element.attr("favorite","False");
+         $button_element.attr("src","/images/empty_heart.gif");
 		}
    });
 }

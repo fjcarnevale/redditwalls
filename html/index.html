@@ -19,14 +19,12 @@
       </div>
 
       <div id="controls">
-         Sort:
-         <select id='sort' id='sort'>
+         <select id='sort'>
 	         <option value='hot' selected>Hot</option>
 	         <option value='top'>Top</option>
 	         <option value='new'>New</option>
          </select>
 
-         Time:
          <select id='time' disabled>
 	         <option value='day'>Day</option>
 	         <option value='week'>Week</option>
@@ -37,14 +35,17 @@
 
          <button type='button' onclick='refresh()'>Refresh</button>
 
+
          {% if logout_url is defined %}
-			      <a href='{{ logout_url }}'><button type='button'>Logout</button></a>
+               <a href="{{ logout_url }}"><div class="logout">Logout</div></a>
 			      <a href='/favorites'><button type='button'>Favorites</button></a>
 		      {% else %}
-			      <a href='{{ login_url }}'><button type='button'>Login</button></a>
+			      <a href="{{ login_url }}"><div class="login">Login</div></a>
 	      {% endif %}
       </div>
    </div>
+
+   <hr width="100%" />
 </div>
 
 <div id='main_div'>
