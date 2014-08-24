@@ -33,11 +33,11 @@
 	         <option value='all'>All Time</option>
          </select>
 
-         <a href="javascript:;"><div class="refresh">Refresh</div></a>
+         <a href="javascript:;"><div id="refresh-button" class="refresh">Refresh</div></a>
 
          {% if logout_url is defined %}
+               <a href="javascript:;"><div id="favorites-button" class="favorites">Favorites</div></a>
                <a href="{{ logout_url }}"><div class="logout">Logout</div></a>
-			      <a href='/favorites'><button type='button'>Favorites</button></a>
 		      {% else %}
 			      <a href="{{ login_url }}"><div class="login">Login</div></a>
 	      {% endif %}

@@ -119,30 +119,29 @@ class Favorite(BaseHandler):
 		self.response.write(action + ' ' + wall_id)
 
 class DisplayFavorites(BaseHandler):
-	""" Handles requests for the favorites page """
-	def get(self):
+   """ Handles requests for the favorites page """
+   def get(self):
 
-		username = self.session.get('username', '')
+      username = self.session.get('username', '')
 
-		if(username):
-			favorites = User.get_by_id(username).favorites
+      if(username):
+         user = User.get_by_id(username)
+         favorites = user.favorites
 
-			walls = []
-			for fav in favorites:
-				walls.append(Wallpaper.get_by_id(fav))
-			
-			thumbnails = {}
-			for wall in walls:
-				thumbnails[wall.name] = Imgur.thumbnail(wall.image_link, 'medium')
+         wallpapers = []
+         for fav in favorites:
+            wallpapers.append(Wallpaper.get_by_id(fav))
 
-			template_values = { 'username':username,
-						'logout_url':'/?logout=true', # TODO fix logout URL
-						'wallpapers':walls,
-						'thumbnails':thumbnails
-					  }
+         thumbnails = {}
+         for wall in wallpapers:
+            thumbnails[wall.name] = Imgur.thumbnail(wall.image_link, 'medium')
 
-			template = JINJA_ENVIRONMENT.get_template('html/favorites.html')
-			self.response.write(template.render(template_values))
+         template_values = { 'wallpapers':wallpapers, 'thumbnails':thumbnails }
+         template_values['favorites'] = user.favorites
+         template_values['username'] = username
+
+         template = JINJA_ENVIRONMENT.get_template('html/results.html')
+         self.response.write(template.render(template_values))
 	
 class OAuthHandler(BaseHandler):
 	""" Handles oauth callbacks """

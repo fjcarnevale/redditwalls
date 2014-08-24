@@ -31,9 +31,11 @@ $(document).ready(function() {
 	   }
    });
 
-   $(".refresh").click(refresh);
+   $("#refresh-button").click(refresh);
 
    $("#loadmore-button").click(loadMore);
+
+   $("#favorites-button").click(loadFavorites);
 
    //refresh();
 });
@@ -62,12 +64,28 @@ function refresh()
    });
 }
 
-function loadMore(button)
+function loadMore()
 {
 	$("#loadmore-button").removeClass("loadmore");
    $("#loadmore-button").addClass("loadmore-disabled");
 
 	request = lastRequest + "&after="+last_id;
+
+	$.get(request,function(data)
+   {
+      parse_results(data);
+      $("#loadmore-button").removeClass("loadmore-disabled");
+      $("#loadmore-button").addClass("loadmore");
+   });
+}
+
+function loadFavorites()
+{
+	$("#loadmore-button").removeClass("loadmore");
+   $("#loadmore-button").addClass("loadmore-disabled");
+   $("#main_div").html("");
+
+   request = "/favorites";
 
 	$.get(request,function(data)
    {

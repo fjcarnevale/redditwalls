@@ -3,7 +3,8 @@
 .refresh,
 .subreddit,
 .loadmore,
-.loadmore-disabled
+.loadmore-disabled,
+.favorites
 {
    display: inline-block;
    height:20px;
@@ -31,7 +32,7 @@
 
 .subreddit
 {
-   background-color:#ff3300;
+   background-color:#FF4500;
 }
 
 .login
@@ -48,6 +49,11 @@
 .loadmore
 {
    background-color:#1087E8;
+}
+
+.favorites
+{
+   background-color:#ED40D3;
 }
 
 .loadmore-disabled
