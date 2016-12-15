@@ -7,11 +7,11 @@ config['webapp2_extras.sessions'] = {
 }
 
 application = webapp2.WSGIApplication([
-	('/', handlers.Index),
-	('/results', handlers.Results),
-	('/favorite', handlers.Favorite),
-	('/favorites', handlers.DisplayFavorites),
-	('/oauth', handlers.OAuthHandler)
+  ('/', handlers.Index),
+  ('/results', handlers.Results),
+  ('/favorite', handlers.Favorite),
+  ('/favorites', handlers.DisplayFavorites),
+  ('/oauth', handlers.OAuthHandler)
 ], config=config, debug=True)
 
 
