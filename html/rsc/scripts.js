@@ -37,7 +37,7 @@ $(document).ready(function() {
 
    $("#favorites-button").click(loadFavorites);
 
-   //refresh();
+   refresh();
 });
 
 $(document).on('click','.subreddit',function()

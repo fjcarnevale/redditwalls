@@ -22,7 +22,7 @@ class InvalidImgurUrlException(Exception):
    pass
 
 class RequestWithMethod(urllib2.Request):
-    """Workaround for using DELETE with urllib2"""
+  """Workaround for using DELETE with urllib2"""
   def __init__(self, url, method, data=None, headers={},\
     origin_req_host=None, unverifiable=False):
     self._method = method

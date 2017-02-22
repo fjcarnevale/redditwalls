@@ -87,7 +87,7 @@ class Results(BaseHandler):
         template_values['favorites'] = user.favorites
         template_values['username'] = username
     
-    template = JINJA_ENVIRONMENT.get_template('html/results.html')
+    template = JINJA_ENVIRONMENT.get_template('html/results.json')
     self.response.write(template.render(template_values))
 
 class Favorite(BaseHandler):
@@ -139,7 +139,7 @@ class DisplayFavorites(BaseHandler):
          template_values['favorites'] = user.favorites
          template_values['username'] = username
 
-         template = JINJA_ENVIRONMENT.get_template('html/results.html')
+         template = JINJA_ENVIRONMENT.get_template('html/results.json')
          self.response.write(template.render(template_values))
   
 class OAuthHandler(BaseHandler):
