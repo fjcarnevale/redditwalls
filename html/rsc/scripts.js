@@ -100,12 +100,12 @@ function buildRequest()
    var request = "results?"
 
    var subreddits = [];
-      
+
    $("#subreddits").children().each(function(index)
    {
       subreddits.push($(this).text());
    });
-	
+
 	for(var i = 0; i < subreddits.length; i++)
 	{
 	   request += "sub=" + subreddits[i] + "&";
@@ -131,7 +131,6 @@ function buildRequest()
 
 function parse_results(response_text)
 {
-	console.log(response_text);
 	var results = JSON.parse(response_text);
 
 	if(results['success'])
@@ -158,7 +157,7 @@ function parse_results(response_text)
 				image_html += "value='" + images[i]["name"] + "' onClick='favorite(this);' src='" + fav_image + "' ";
 				image_html += "width='12' height='12'/>";
 			}
-			
+
 
 			image_html += "<a href='" + images[i]["image_link"] + "' target='_blank'>";
 			image_html += "<img id='" + images[i]["name"] + "' src='" + images[i]["thumbnail"] + "'/></a>";
@@ -174,7 +173,7 @@ function parse_results(response_text)
 	{
 		alert("Error!");
 	}
-	
+
 }
 
 function favorite(button)
@@ -207,20 +206,3 @@ function favorite(button)
 		}
    });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

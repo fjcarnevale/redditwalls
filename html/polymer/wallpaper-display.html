@@ -1,0 +1,46 @@
+<link rel="import" href="https://polygit.org/components/polymer/polymer.html">
+
+<dom-module id="wallpaper-display">
+  <template>
+    <style>
+      .image
+      {
+         position:relative;
+         display:inline-block;
+         padding: 5px;
+      }
+      .image a.reddit
+      {
+          position:absolute;
+          bottom:20px;
+          width:16px;
+          height:16px;
+          text-align:center;
+          z-index:2;
+          text-decoration:none;
+          display:block;
+          left:15px;
+      }
+      .image img.reddit
+      {
+          width:24px;
+          height:24px;
+      }
+    </style>
+
+    <div class="image">
+      <a class="reddit" href="https://www.reddit.com/r/wallpapers/comments/4vs7of/the_hash_slinging_slasher/">
+        <img class="reddit" src="/images/reddit_button.gif" width="12" height="12"></img>
+      </a>
+      <a href="http://i.imgur.com/4iD2Xmb.jpg" target="_blank">
+        <img src="http://i.imgur.com/4iD2Xmbm.jpg"></img>
+      </a>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'wallpaper-display',
+    });
+  </script>
+</dom-module>

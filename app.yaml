@@ -11,6 +11,9 @@ handlers:
 - url: /html/rsc
   static_dir: html/rsc
 
+- url: /html/polymer
+  static_dir: html/polymer
+
 - url: /.*
   script: redditwalls.application
 

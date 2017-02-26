@@ -1,0 +1,124 @@
+<link rel="import" href="https://polygit.org/components/polymer/polymer.html">
+
+<dom-module id="wallpaper-header">
+  <template>
+    <style>
+      .refresh,
+      .subreddit,
+      .loadmore,
+      .loadmore-disabled,
+      .favorites
+      {
+         display: inline-block;
+         height:20px;
+         width: auto;
+         font-family:arial;
+         font-weight:bold;
+         color:#ffffff;
+         border-radius: 5px;
+         text-align:center;
+         margin-top:2px;
+         margin-right:5px;
+
+         border-width: 2px;
+         border-color: transparent;
+         border-style: solid;
+      }
+
+      .subreddit:hover
+      {
+         border-width: 2px;
+         border-color: #FFFFFF;
+         border-style: solid;
+      }
+
+
+      .subreddit
+      {
+         background-color:#FF4500;
+      }
+
+      .refresh,
+      .loadmore
+      {
+         background-color:#1087E8;
+      }
+
+      #header-container
+      {
+         background-color:#303030;
+         width: 100%;
+         top: 0;
+         position: fixed;
+         z-index:100000;
+      }
+
+      #header
+      {
+         background-color:#303030;
+         width: 85%;
+         margin-top: 20px;
+         margin-left: auto;
+         margin-right: auto;
+         margin-bottom: 10px;
+      }
+
+      #subreddits
+      {
+         display: inline;
+      }
+
+      #controls
+      {
+         margin-bottom: 10px;
+      }
+
+    </style>
+
+    <div id="header-container">
+       <div id="header">
+          <div style="float:left">
+    	      <input type="text" id="subreddit-input" placeholder="Add a subreddit"></input>
+             <div id="subreddits">
+               <template is="dom-repeat" items="{{subreddits}}">
+                 <div class='subreddit'>{{item}}</div>
+               </template>
+             </div>
+          </div>
+
+          <div id="controls" style="float:right">
+             <select id='sort'>
+    	         <option value='hot' selected>Hot</option>
+    	         <option value='top'>Top</option>
+    	         <option value='new'>New</option>
+             </select>
+
+             <select id='time' disabled>
+    	         <option value='day'>Day</option>
+    	         <option value='week'>Week</option>
+    	         <option value='month'>Month</option>
+    	         <option value='year'>Year</option>
+    	         <option value='all'>All Time</option>
+             </select>
+
+             <a href="javascript:;"><div id="refresh-button" class="refresh">Refresh</div></a>
+          </div>
+       </div>
+
+       <hr width="100%" />
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'wallpaper-header',
+
+      properties: {
+        subreddits: {
+          type: Array,
+          value: () => ['wallpaper', 'wallpapers', 'minimalwallpaper'],
+        },
+      },
+    });
+  </script>
+</dom-module>
