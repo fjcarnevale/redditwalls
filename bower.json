@@ -1,0 +1,25 @@
+{
+  "name": "redditwalls",
+  "homepage": "https://github.com/fjcarnevale/redditwalls",
+  "description": "Reddit wallpaper app engine app.",
+  "main": "",
+  "authors": [
+    "fjcarnevale"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paper-button": "PolymerElements/paper-button#^1.0.14",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.5.0",
+    "paper-item": "PolymerElements/paper-item#^1.2.1",
+    "paper-listbox": "PolymerElements/paper-listbox#^1.1.2",
+    "iron-a11y-keys": "PolymerElements/iron-a11y-keys#^1.0.6"
+  }
+}

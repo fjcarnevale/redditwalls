@@ -1,47 +1,28 @@
-<link rel="import" href="https://polygit.org/components/polymer/polymer.html">
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
 
 <dom-module id="wallpaper-header">
   <template>
     <style>
-      .refresh,
-      .subreddit,
-      .loadmore,
-      .loadmore-disabled,
-      .favorites
-      {
-         display: inline-block;
-         height:20px;
-         width: auto;
-         font-family:arial;
-         font-weight:bold;
-         color:#ffffff;
-         border-radius: 5px;
-         text-align:center;
-         margin-top:2px;
-         margin-right:5px;
-
-         border-width: 2px;
-         border-color: transparent;
-         border-style: solid;
-      }
-
-      .subreddit:hover
-      {
-         border-width: 2px;
-         border-color: #FFFFFF;
-         border-style: solid;
-      }
-
-
       .subreddit
       {
-         background-color:#FF4500;
+        background: orangered;
+        color: white;
+        font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        text-transform: none;
       }
 
-      .refresh,
-      .loadmore
-      {
-         background-color:#1087E8;
+      #refresh-button {
+        background: purple;
+        color: white;
+        font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        text-transform: none;
       }
 
       #header-container
@@ -56,52 +37,82 @@
       #header
       {
          background-color:#303030;
-         width: 85%;
-         margin-top: 20px;
+         width: 95%;
+         margin-top: 10px;
          margin-left: auto;
          margin-right: auto;
          margin-bottom: 10px;
       }
 
-      #subreddits
-      {
-         display: inline;
+      #subreddits,
+      #input,
+      #selected-subreddits {
+        display: inline-block;
+      }
+
+      paper-input,
+      paper-dropdown-menu {
+        color: white;
+        --paper-input-container-label: {
+          color: white;
+          font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        };
+        --paper-input-container-input: {
+          color: white;
+          font-style: normal;
+          font-family: serif;
+          text-transform: none;
+          font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        }
+        --paper-input-container-focus-color: skyblue;
       }
 
       #controls
       {
          margin-bottom: 10px;
+         float:right;
       }
 
     </style>
 
     <div id="header-container">
        <div id="header">
-          <div style="float:left">
-    	      <input type="text" id="subreddit-input" placeholder="Add a subreddit"></input>
-             <div id="subreddits">
+          <div id="subreddits">
+            <iron-a11y-keys id="a11y" target="[[inputTarget]]" keys="enter"
+                    on-keys-pressed="addSubreddit"></iron-a11y-keys>
+            <paper-input
+                id="input"
+                always-float-label label="Add a subreddit"
+                value="{{subredditInput}}">
+              <div prefix>/r/</div>
+            </paper-input>
+             <div id="selected-subreddits">
                <template is="dom-repeat" items="{{subreddits}}">
-                 <div class='subreddit'>{{item}}</div>
+                 <paper-button raised class="subreddit" on-tap="removeSubreddit">{{item}}</paper-button>
                </template>
              </div>
           </div>
 
-          <div id="controls" style="float:right">
-             <select id='sort'>
-    	         <option value='hot' selected>Hot</option>
-    	         <option value='top'>Top</option>
-    	         <option value='new'>New</option>
-             </select>
+          <div id="controls">
+            <paper-dropdown-menu label="Sort">
+              <paper-listbox class="dropdown-content" selected="0">
+                <paper-item>Hot</paper-item>
+                <paper-item>Top</paper-item>
+                <paper-item>New</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
 
-             <select id='time' disabled>
-    	         <option value='day'>Day</option>
-    	         <option value='week'>Week</option>
-    	         <option value='month'>Month</option>
-    	         <option value='year'>Year</option>
-    	         <option value='all'>All Time</option>
-             </select>
+            <paper-dropdown-menu label="Time">
+              <paper-listbox class="dropdown-content" selected="0">
+                <paper-item>Day</paper-item>
+                <paper-item>Week</paper-item>
+                <paper-item>Month</paper-item>
+                <paper-item>Year</paper-item>
+                <paper-item>All Time</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
 
-             <a href="javascript:;"><div id="refresh-button" class="refresh">Refresh</div></a>
+             <paper-button raised id="refresh-button">Refresh</paper-button>
           </div>
        </div>
 
@@ -118,7 +129,28 @@
           type: Array,
           value: () => ['wallpaper', 'wallpapers', 'minimalwallpaper'],
         },
+
+        subredditInput: String,
+
+        inputTarget: {
+          type: Object,
+          value: function() { return this.$.input; },
+        },
       },
+
+      addSubreddit() {
+        if(this.subredditInput &&
+          !this.subreddits.includes(this.subredditInput)) {
+          this.push('subreddits', this.subredditInput);
+        }
+      },
+
+      removeSubreddit(e) {
+        let index = this.subreddits.indexOf(e.model.item);
+        if (index >= 0) {
+          this.splice('subreddits', index, 1);
+        }
+      }
     });
   </script>
 </dom-module>

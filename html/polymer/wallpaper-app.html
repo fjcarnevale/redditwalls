@@ -1,5 +1,6 @@
-<link rel="import" href="https://polygit.org/components/polymer/polymer.html">
+<link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/html/polymer/wallpaper-header.html">
+<link rel="import" href="/html/polymer/wallpaper-display.html">
 
 <dom-module id="wallpaper-app">
   <template>
@@ -7,11 +8,20 @@
     </style>
 
     <wallpaper-header></wallpaper-header>
+    <template is="dom-repeat" items="{{wallpapers}}">
+    </template>
   </template>
 
   <script>
     Polymer({
       is: 'wallpaper-app',
+
+      properties: {
+        wallpapers: {
+          type: Array,
+          value: () => [],
+        }
+      },
     });
   </script>
 </dom-module>
