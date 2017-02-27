@@ -57,7 +57,7 @@ class Index(BaseHandler):
         self.session['username'] = ''
 
     else:
-      
+
       template_values['login_url'] = Imgur.get_login_url(response_type='code')
 
     template_values['subreddits'] = default_subreddits
@@ -66,11 +66,12 @@ class Index(BaseHandler):
 
 class Results(BaseHandler):
   """ Handles requests for wallpapers """
-  def get(self): 
+  def get(self):
     wallpapers = get_wallpapers(
-        subreddits = self.request.get('sub', allow_multiple=True),
+        #subreddits = self.request.get('sub', allow_multiple=True),
+        subreddits=['wallpapers'],
         sort=self.request.get('sort'),
-        time=self.request.get('time'),        
+        time=self.request.get('time'),
         after=self.request.get('after'))
 
     thumbnails = {}
@@ -86,7 +87,7 @@ class Results(BaseHandler):
       if user is not None:
         template_values['favorites'] = user.favorites
         template_values['username'] = username
-    
+
     template = JINJA_ENVIRONMENT.get_template('html/results.json')
     self.response.write(template.render(template_values))
 
@@ -106,7 +107,7 @@ class Favorite(BaseHandler):
         acct = user.to_imgur_account()
         album = Imgur.Album.from_id(user.album)
 
-        if action == 'add':       
+        if action == 'add':
           user.add_favorite(wall_id)
           album.add_image(Imgur.extract_imgur_id(wall.image_link), acct)
         else:
@@ -141,7 +142,7 @@ class DisplayFavorites(BaseHandler):
 
          template = JINJA_ENVIRONMENT.get_template('html/results.json')
          self.response.write(template.render(template_values))
-  
+
 class OAuthHandler(BaseHandler):
   """ Handles oauth callbacks """
   def get(self):
@@ -164,17 +165,8 @@ class OAuthHandler(BaseHandler):
     return self.redirect('/')
 
 
-def get_wallpapers(subreddits = ['wallpapers'],sort = 'top',time = 'week',limit = 30, after = ''):  
+def get_wallpapers(subreddits = ['wallpapers'],sort = 'top',time = 'week',limit = 30, after = ''):
   """Creates wallpapers based on reddit posts"""
   posts = reddit.get_posts(subreddits,sort,limit,time,after)
   wallpapers = wallpaper.create_wallpapers(posts)
   return wallpapers
-
-
-
-
-
-
-
-
-        

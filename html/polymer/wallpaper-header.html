@@ -127,7 +127,7 @@
       properties: {
         subreddits: {
           type: Array,
-          value: () => ['wallpaper', 'wallpapers', 'minimalwallpaper'],
+          notify: true,
         },
 
         subredditInput: String,
@@ -142,6 +142,7 @@
         if(this.subredditInput &&
           !this.subreddits.includes(this.subredditInput)) {
           this.push('subreddits', this.subredditInput);
+          this.subredditInput = "";
         }
       },
 

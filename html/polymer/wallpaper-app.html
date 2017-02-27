@@ -1,13 +1,15 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/html/polymer/wallpaper-header.html">
 <link rel="import" href="/html/polymer/wallpaper-display.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+
 
 <dom-module id="wallpaper-app">
   <template>
     <style>
     </style>
-
-    <wallpaper-header></wallpaper-header>
+    <iron-request id="xhr" response="{{wallpaperResponse}}"></iron-request>
+    <wallpaper-header subreddits="{{subreddits}}"></wallpaper-header>
     <template is="dom-repeat" items="{{wallpapers}}">
     </template>
   </template>
@@ -17,11 +19,29 @@
       is: 'wallpaper-app',
 
       properties: {
+        subreddits: {
+          type: Array,
+          value: () => ['wallpaper', 'wallpapers', 'minimalwallpaper'],
+        },
+
         wallpapers: {
           type: Array,
           value: () => [],
-        }
+        },
+
+        wallpaperResponse: {
+          type: Object,
+          observer: 'handleWallpaperResponseChanged'
+        },
       },
+
+      ready() {
+        this.$.xhr.send({'url': 'results'})
+      },
+
+      handleWallpaperResponseChanged() {
+        console.log(this.wallpaperResponse);
+      }
     });
   </script>
 </dom-module>
