@@ -29,11 +29,11 @@
     </style>
 
     <div class="wallpaper">
-      <a class="reddit-link" href="https://www.reddit.com/r/wallpapers/comments/4vs7of/the_hash_slinging_slasher/">
+      <a class="reddit-link" href="[[redditUrl]]" target="_blank">
         <img class="reddit-icon" src="/images/reddit_button.gif" width="12" height="12"></img>
       </a>
-      <a href="http://i.imgur.com/4iD2Xmb.jpg" target="_blank">
-        <img src="http://i.imgur.com/4iD2Xmbm.jpg"></img>
+      <a href="[[url]]" target="_blank">
+        <img src="[[thumbnail]]"></img>
       </a>
     </div>
   </template>
@@ -41,6 +41,14 @@
   <script>
     Polymer({
       is: 'wallpaper-display',
+
+      properties: {
+        url: String,
+
+        redditUrl: String,
+
+        thumbnail: String,
+      },
     });
   </script>
 </dom-module>

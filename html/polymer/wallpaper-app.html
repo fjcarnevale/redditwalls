@@ -7,11 +7,21 @@
 <dom-module id="wallpaper-app">
   <template>
     <style>
+      #results-div {
+        margin-top: 100px;
+      }
     </style>
     <iron-request id="xhr" response="{{wallpaperResponse}}"></iron-request>
-    <wallpaper-header subreddits="{{subreddits}}"></wallpaper-header>
-    <template is="dom-repeat" items="{{wallpapers}}">
-    </template>
+    <wallpaper-header subreddits="{{subreddits}}" on-refresh="refresh"></wallpaper-header>
+    <div id="results-div">
+      <template is="dom-repeat" items="{{wallpapers}}">
+        <wallpaper-display
+          url="[[item.url]]"
+          reddit-url="[[item.redditUrl]]"
+          thumbnail="[[item.thumbnail]]">
+        </wallpaper-display>
+      </template>
+    </div>
   </template>
 
   <script>
@@ -19,6 +29,8 @@
       is: 'wallpaper-app',
 
       properties: {
+        lastId: String,
+
         subreddits: {
           type: Array,
           value: () => ['wallpaper', 'wallpapers', 'minimalwallpaper'],
@@ -36,11 +48,43 @@
       },
 
       ready() {
-        this.$.xhr.send({'url': 'results'})
+        this.requestMoreWallpaper();
+      },
+
+      refresh() {
+        this.wallpapers = [];
+        this.requestMoreWallpaper();
+      },
+
+      requestMoreWallpaper() {
+        // TODO: this needs to send the lastId along
+        // May have to switch to iron-xhr
+        this.$.xhr.send({'url': 'results'});
       },
 
       handleWallpaperResponseChanged() {
-        console.log(this.wallpaperResponse);
+        if (!this.wallpaperResponse) {
+          return;
+        }
+
+        var results = JSON.parse(this.wallpaperResponse);
+        
+        if (!results || !results.success) {
+          console.log('Wallpapers request failed.');
+          return;
+        }
+
+        var images = results.data.images;
+        images.forEach((image) => {
+          let wallpaper = {
+              url: image.image_link,
+              redditUrl: 'http://www.reddit.com' + image.reddit_link,
+              thumbnail: image.thumbnail,
+          };
+          this.push('wallpapers', wallpaper);
+        }); 
+
+        this.lastId = images[images.length - 1].name;
       }
     });
   </script>

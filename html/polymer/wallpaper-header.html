@@ -112,7 +112,7 @@
               </paper-listbox>
             </paper-dropdown-menu>
 
-             <paper-button raised id="refresh-button">Refresh</paper-button>
+             <paper-button raised id="refresh-button" on-tap="refresh">Refresh</paper-button>
           </div>
        </div>
 
@@ -136,6 +136,10 @@
           type: Object,
           value: function() { return this.$.input; },
         },
+      },
+
+      refresh() {
+        this.fire('refresh');
       },
 
       addSubreddit() {
