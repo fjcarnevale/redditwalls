@@ -1,17 +1,28 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/html/polymer/wallpaper-header.html">
 <link rel="import" href="/html/polymer/wallpaper-display.html">
-<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 
 
 <dom-module id="wallpaper-app">
   <template>
     <style>
+      #loadmore-button {
+        background: darkblue;
+        color: white;
+        font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        text-transform: none;
+        margin-right: 50%;
+        margin-left: 50%;
+        width: 100px;
+      }
+
       #results-div {
         margin-top: 100px;
       }
     </style>
-    <iron-request id="xhr" response="{{wallpaperResponse}}"></iron-request>
+    <iron-ajax id="xhr" url="/results" last-response="{{wallpaperResponse}}"></iron-ajax>
     <wallpaper-header subreddits="{{subreddits}}" on-refresh="refresh"></wallpaper-header>
     <div id="results-div">
       <template is="dom-repeat" items="{{wallpapers}}">
@@ -22,6 +33,7 @@
         </wallpaper-display>
       </template>
     </div>
+    <paper-button raised id="loadmore-button" on-tap="requestMoreWallpaper">Load More</paper-button>
   </template>
 
   <script>
@@ -52,29 +64,27 @@
       },
 
       refresh() {
+        this.lastId = null;
         this.wallpapers = [];
         this.requestMoreWallpaper();
       },
 
       requestMoreWallpaper() {
-        // TODO: this needs to send the lastId along
-        // May have to switch to iron-xhr
-        this.$.xhr.send({'url': 'results'});
+        this.$.xhr.params = this.lastId ? {after: this.lastId} : {};
+        this.$.xhr.generateRequest();
       },
 
       handleWallpaperResponseChanged() {
         if (!this.wallpaperResponse) {
           return;
         }
-
-        var results = JSON.parse(this.wallpaperResponse);
         
-        if (!results || !results.success) {
+        if (!this.wallpaperResponse || !this.wallpaperResponse.success) {
           console.log('Wallpapers request failed.');
           return;
         }
 
-        var images = results.data.images;
+        var images = this.wallpaperResponse.data.images;
         images.forEach((image) => {
           let wallpaper = {
               url: image.image_link,
