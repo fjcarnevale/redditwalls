@@ -68,8 +68,7 @@ class Results(BaseHandler):
   """ Handles requests for wallpapers """
   def get(self):
     wallpapers = get_wallpapers(
-        #subreddits = self.request.get('sub', allow_multiple=True),
-        subreddits=['wallpapers'],
+        subreddits = self.request.get('sub', allow_multiple=True),
         sort=self.request.get('sort'),
         time=self.request.get('time'),
         after=self.request.get('after'))

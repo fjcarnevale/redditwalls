@@ -70,7 +70,10 @@
       },
 
       requestMoreWallpaper() {
-        this.$.xhr.params = this.lastId ? {after: this.lastId} : {};
+        this.$.xhr.params = {
+          after: this.lastId ? this.lastId : '',
+          sub: this.subreddits,
+        }
         this.$.xhr.generateRequest();
       },
 
