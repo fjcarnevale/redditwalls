@@ -23,7 +23,12 @@
       }
     </style>
     <iron-ajax id="xhr" url="/results" last-response="{{wallpaperResponse}}"></iron-ajax>
-    <wallpaper-header subreddits="{{subreddits}}" on-refresh="refresh"></wallpaper-header>
+    <wallpaper-header
+        subreddits="{{subreddits}}"
+        sort="{{sort}}"
+        time="{{time}}"
+        on-refresh="refresh">
+    </wallpaper-header>
     <div id="results-div">
       <template is="dom-repeat" items="{{wallpapers}}">
         <wallpaper-display
@@ -42,6 +47,13 @@
 
       properties: {
         lastId: String,
+
+        sort: {
+          type: String,
+          value: 'hot'
+        },
+
+        time: String,
 
         subreddits: {
           type: Array,
@@ -72,8 +84,10 @@
       requestMoreWallpaper() {
         this.$.xhr.params = {
           after: this.lastId ? this.lastId : '',
+          sort: this.sort,
+          time: this.time, 
           sub: this.subreddits,
-        }
+        };
         this.$.xhr.generateRequest();
       },
 

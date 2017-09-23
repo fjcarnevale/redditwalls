@@ -94,7 +94,9 @@
           </div>
 
           <div id="controls">
-            <paper-dropdown-menu label="Sort">
+            <paper-dropdown-menu
+                label="Sort"
+                on-iron-select="_selectSort">
               <paper-listbox class="dropdown-content" selected="0">
                 <paper-item>Hot</paper-item>
                 <paper-item>Top</paper-item>
@@ -102,7 +104,9 @@
               </paper-listbox>
             </paper-dropdown-menu>
 
-            <paper-dropdown-menu label="Time">
+            <paper-dropdown-menu
+                label="Time"
+                on-iron-select="_selectTime">
               <paper-listbox class="dropdown-content" selected="0">
                 <paper-item>Day</paper-item>
                 <paper-item>Week</paper-item>
@@ -130,6 +134,16 @@
           notify: true,
         },
 
+        sort: {
+					type: String,
+					notify: true,
+				},
+
+        time: {
+          type: String,
+          notify: true,
+        },
+
         subredditInput: String,
 
         inputTarget: {
@@ -137,6 +151,46 @@
           value: function() { return this.$.input; },
         },
       },
+
+			_selectSort : function(e) {
+				var selectedItem = e.target.selected;
+				if (selectedItem) {
+					switch (selectedItem) {
+						case 0:
+							this.sort = 'hot';
+							break;
+						case 1:
+							this.sort = 'top'
+							break;
+						case 2:
+							this.sort = 'new'
+							break;
+					}
+				}
+			},
+
+			_selectTime : function(e) {
+				var selectedItem = e.target.selected;
+				if (selectedItem) {
+					switch (selectedItem) {
+						case 0:
+							this.time = 'day';
+							break;
+						case 1:
+							this.time = 'week';
+							break;
+						case 2:
+							this.time = 'month';
+							break;
+						case 3:
+							this.time = 'year';
+							break;
+						case 4:
+							this.time = 'all';
+							break;
+					}
+				}
+			},
 
       refresh() {
         this.fire('refresh');
@@ -157,5 +211,4 @@
         }
       }
     });
-  </script>
-</dom-module>
+  </script> </dom-module>
